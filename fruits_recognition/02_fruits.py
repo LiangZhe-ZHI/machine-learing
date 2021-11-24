@@ -21,7 +21,7 @@ def load_image(path):  # 读取图片，调整尺寸，归一化处理
 
 
 infer_imgs = []  # 图像数据列表
-test_img = 'C:\\Users\\zlz\\Desktop\\pear2.jfif'  # 预测图像路径
+test_img = 'C:\\Users\\zlz\\Desktop\\OIP-C.jpg'  # 预测图像路径
 infer_imgs.append(load_image(test_img))  # 加载图像数据，添加到列表
 infer_imgs = np.array(infer_imgs)  # 转换array！！
 

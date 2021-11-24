@@ -1,17 +1,15 @@
 # 01_fruits.py
 # 图像分类：水果分类
 # 数据集介绍：
-# 1307张水果图片，共5个类别（苹果288张，香蕉275张，葡萄216张，橘子277张，梨子251张）
+# 3339张水果图片，共5个类别（苹果732张，香蕉727张，葡萄608张，橘子607张，梨子665张）
 
 # 01.数据预处理
 import os
-import json
 
 name_dict = {'apple': 0, 'banana': 1, 'grape': 2, 'orange': 3, 'pear': 4}  # 名称-分类数字对应字典
 data_root_path = 'fruits/'  # 数据集目录
 test_file_path = data_root_path + 'test.list'  # 测试集文件路径
 train_file_path = data_root_path + 'train.list'  # 训练集文件路径
-readme_file = data_root_path + 'readme.json'  # 样本数据汇总文件
 name_data_list = {}  # 记录每个类别多少张训练图片、测试图片
 
 
@@ -32,8 +30,8 @@ for d in dirs:
         imgs = os.listdir(full_path)
         for img in imgs:
             save_train_test_file(full_path + '/' + img, d)
-        else:  # 如果是文件，不作处理
-            pass
+    else:  # 如果是文件，不作处理
+        pass
 
 # 分测试集和训练集
 with open(test_file_path, 'w') as f:
@@ -109,7 +107,7 @@ def convolution_nural_network(image, type_size):
     conv_pool_1 = fluid.nets.simple_img_conv_pool(
         input=image,  # 输入数据
         filter_size=3,  # 卷积核大小
-        num_filters=32,  # 卷积核大小，与输出通道数相同
+        num_filters=32,  # 卷积核数量，与输出通道数相同
         pool_size=2,  # 池化层2*2
         pool_stride=2,  # 池化层步长
         act='relu')  # 激活函数
@@ -121,7 +119,7 @@ def convolution_nural_network(image, type_size):
     conv_pool_2 = fluid.nets.simple_img_conv_pool(
         input=drop,  # 输入数据
         filter_size=3,  # 卷积核大小
-        num_filters=64,  # 卷积核大小，与输出通道数相同
+        num_filters=64,  # 卷积核数量，与输出通道数相同
         pool_size=2,  # 池化层2*2
         pool_stride=2,  # 池化层步长
         act='relu')  # 激活函数
@@ -132,7 +130,7 @@ def convolution_nural_network(image, type_size):
     conv_pool_3 = fluid.nets.simple_img_conv_pool(
         input=drop,  # 输入数据
         filter_size=3,  # 卷积核大小
-        num_filters=64,  # 卷积核大小，与输出通道数相同
+        num_filters=64,  # 卷积核数量，与输出通道数相同
         pool_size=2,  # 池化层2*2
         pool_stride=2,  # 池化层步长
         act='relu')  # 激活函数
@@ -167,7 +165,7 @@ predict = convolution_nural_network(image=image,  # 输入数据
                                     type_size=5)  # 类别数量
 cost = fluid.layers.cross_entropy(input=predict,  # 预测值
                                   label=label)  # 期望值
-avg_cost = fluid.layers.mean(cost)  # 求瞬时值的平均值
+avg_cost = fluid.layers.mean(cost)  # 求损失值的平均值
 # 计算预测准确率
 accuracy = fluid.layers.accuracy(input=predict,  # 预测值
                                  label=label)  # 期望值
@@ -180,7 +178,7 @@ exe = fluid.Executor(place)
 exe.run(fluid.default_startup_program())  # 初始化系统参数
 feeder = fluid.DataFeeder(feed_list=[image, label],
                           place=place)  # 数据喂入
-for pass_id in range(80):
+for pass_id in range(420):
     train_cost = 0
     for batch_id, data in enumerate(train_reader()):
         train_cost, train_acc = exe.run(
